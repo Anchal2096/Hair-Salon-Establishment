@@ -64,3 +64,37 @@ hair_salon_df.drop("last_tod", axis=1, inplace=True)
 hair_salon_df.to_csv(base_address + "\Hair-Salon-Establishment\dataset\hair_salon_munged.csv", index=False)
 # print(hair_salon_df["book_tod"])
 
+
+
+from sklearn import preprocessing, svm
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+
+
+
+def classifier_and_prediction(csv_file=None, classified_dataframe=None):
+    x, y = None, None
+    try:
+        if csv_file is not None:
+            classified_dataframe = pd.read_csv(csv_file)
+            x = classified_dataframe.iloc[:, :-3]
+            y = classified_dataframe['noshow']
+        elif classified_dataframe is not None:
+            x = classified_dataframe.iloc[:, :-3]
+            y = classified_dataframe['noshow']
+
+    except csv_file is None and classified_dataframe is None:
+        print("program will terminate as both arguments are empty")
+        exit(0)
+
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+    clf = svm.SVC(kernel='linear')
+
+    clf.fit(x_train, y_train)
+
+    y_pred = clf.predict(x_test)
+
+    # for model evaluation
+    print(clf, "\n", confusion_matrix(y_test, y_pred), classification_report(y_test, y_pred), accuracy_score(y_pred=y_pred, y_true=y_test))
+
+classifier_and_prediction("/home/atrivedi/Hair-Salon-Establishment/dataset/hair_salon_munged.csv")
