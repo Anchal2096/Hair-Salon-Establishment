@@ -95,6 +95,25 @@ def classifier_and_prediction(csv_file=None, classified_dataframe=None):
     y_pred = clf.predict(x_test)
 
     # for model evaluation
-    print(clf, "\n", confusion_matrix(y_test, y_pred), classification_report(y_test, y_pred), accuracy_score(y_pred=y_pred, y_true=y_test))
+    return clf, confusion_matrix(y_test, y_pred), classification_report(y_test, y_pred), accuracy_score(y_pred=y_pred, y_true=y_test)
 
-classifier_and_prediction("/home/atrivedi/Hair-Salon-Establishment/dataset/hair_salon_munged.csv")
+
+clf, confus_matrix, class_report, accuracy = classifier_and_prediction("/home/atrivedi/Hair-Salon-Establishment/dataset/hair_salon_munged.csv")
+
+
+from sklearn.externals import joblib
+import joblib
+
+"""
+The arguments are the model/classifier itself, and the filename by which it is to be saved
+As, the new versions of the scikit models may not support its previous versions of pickle file,
+hence the name also includes the scikit learn library version with the filename"""
+
+
+def save_model(model, save_as_filename):
+    scikit_learn_version = joblib.__version__
+    save_as_filename = save_as_filename + scikit_learn_version + ".pkl"
+    joblib.dump(model, save_as_filename)    # this saves the model
+    print(f"saved as {save_as_filename}")
+
+save_model(clf, "hair_salon")
